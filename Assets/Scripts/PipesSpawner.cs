@@ -1,10 +1,7 @@
-using System.Collections;
 using UnityEngine;
 
 public class PipesSpawner : MonoBehaviour
 {
-
-    [SerializeField] private GameObject _pipes;
     [SerializeField] private float _heightRange;
 
     private void Start()
@@ -14,10 +11,8 @@ public class PipesSpawner : MonoBehaviour
 
     private void SpawnPipes()
     {
-        Vector3 spawnPosition = transform.position + new Vector3(0, Random.Range(-_heightRange, _heightRange),0);
-        GameObject pipes = Instantiate(_pipes, spawnPosition, Quaternion.identity);
-
-        Destroy(pipes, 10);
+        Vector3 spawnPosition = transform.position + new Vector3(0, Random.Range(-_heightRange, _heightRange), 0);
+        ObjectPool.Instance.RequestPipes(spawnPosition, Quaternion.identity);
     }
 
 }
