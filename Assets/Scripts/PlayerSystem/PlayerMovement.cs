@@ -30,7 +30,7 @@ public class PlayerMovement : PlayerStateManager
             _rigidbody.velocity = Vector3.up * _velocity;
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerExit(Collider other)
     {
         ScoreManager.Instance.ScoreUp();
     }

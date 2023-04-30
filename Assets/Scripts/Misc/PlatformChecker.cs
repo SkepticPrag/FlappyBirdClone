@@ -9,7 +9,7 @@ public class PlatformChecker : MonoBehaviour
         _menuManager = GetComponent<MenuManager>();
 
         if (Application.platform != RuntimePlatform.WindowsPlayer)
-            _menuManager.ExitButton.SetActive(true);
+            _menuManager.ExitButton.SetActive(false);
     }
 
     private void Start()

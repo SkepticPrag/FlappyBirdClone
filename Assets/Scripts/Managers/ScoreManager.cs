@@ -35,7 +35,7 @@ public class ScoreManager : MonoBehaviour
     {
         PlayerPrefs.SetInt("HighScore", _currentScore);
         _bestScoreText.text = _currentScore.ToString();
-        _scorePanelBestScoreText.text = _bestScore.ToString();
+        _scorePanelBestScoreText.text = _currentScore.ToString();
     }
 
     public void ScoreUp()
