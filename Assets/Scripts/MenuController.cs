@@ -1,29 +1,66 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 public class MenuController : MonoBehaviour
 {
-    [SerializeField] private GameObject MainMenu;
-    [SerializeField] private GameObject PauseMenu;
+    [SerializeField] private GameObject MainMenuPanel;
+    [SerializeField] private GameObject PausePanel;
     [SerializeField] private GameObject ScorePanels;
-    [SerializeField] private Button _exitButton;
+    [SerializeField] private GameObject GameOverPanel;
+    [SerializeField] private GameObject _exitButton;
 
+    private static MenuController instance;
+    public static MenuController Instance { get { return instance; } }
 
     private void Awake()
     {
-        if (Application.platform != RuntimePlatform.WindowsEditor)
-            _exitButton.gameObject.SetActive(true);
+        if (instance == null) { instance = this; }
+        else if (instance != this)
+            Destroy(gameObject);
+
+        if (Application.platform != RuntimePlatform.WindowsPlayer)
+            _exitButton.SetActive(true);
     }
 
 
-    public void StartGame()
+    public void PlayButton()
     {
-        MainMenu.SetActive(false);
+        MainMenuPanel.SetActive(false);
         ScorePanels.SetActive(true);
+        GameManager.Instance.StartGame();
     }
 
-    public void ExitGame()
+    public void ResumeButton()
+    {
+        PausePanel.SetActive(false);
+    }
+
+    public void RetryButton()
+    {
+        GameOverPanel.SetActive(false);
+        GameManager.Instance.Retry();
+    }
+
+    public void MainMenuButton()
+    {
+        GameOverPanel.SetActive(false);
+        PausePanel.SetActive(false);
+        ScorePanels.SetActive(false);
+        MainMenuPanel.SetActive(true);
+        GameManager.Instance.MainMenu();
+    }
+
+    public void ExitGameButton()
     {
         Application.Quit();
+    }
+
+    public void PauseButton()
+    {
+        PausePanel.SetActive(true);
+    }
+
+    public void GameOverMenu()
+    {
+        GameOverPanel.SetActive(true);
     }
 }

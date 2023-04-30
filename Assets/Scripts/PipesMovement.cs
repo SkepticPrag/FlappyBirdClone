@@ -5,9 +5,27 @@ public class PipesMovement : MonoBehaviour
 {
     [SerializeField] private float _speed;
 
+    public delegate void OnGameFinishedDisablePipes();
+    public static OnGameFinishedDisablePipes onGameFinishedDisablePipes;
+
+    public delegate void OnGameResumed();
+    public static OnGameResumed onGameResumed;
+
     private void OnEnable()
     {
+        onGameResumed += RestartCoroutine;
+        onGameFinishedDisablePipes += StopDeactivatePipesCoroutine;
         StartCoroutine("DeactivatePipes");
+    }
+
+    private void RestartCoroutine()
+    {
+        StartCoroutine("DeactivatePipes");
+    }
+
+    private void StopDeactivatePipesCoroutine()
+    {
+        StopCoroutine("DeactivatePipes");
     }
 
     private IEnumerator DeactivatePipes()
@@ -19,6 +37,7 @@ public class PipesMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        transform.position += Vector3.left * _speed * Time.deltaTime;
+        if (GameManager.Instance.IsGameplayOn)
+            transform.position += Vector3.left * _speed * Time.deltaTime;
     }
 }

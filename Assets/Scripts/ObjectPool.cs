@@ -35,6 +35,15 @@ public class ObjectPool : MonoBehaviour
         }
     }
 
+    public void DisableEveryPipe()
+    {
+        for (int i = 0; i < PoolList.Count; i++)
+        {
+            if (PoolList[i].activeSelf)
+                PoolList[i].gameObject.SetActive(false);
+        }
+    }
+
     public GameObject RequestPipes(Vector3 position, Quaternion rotation)
     {
         for (int i = 0; i < PoolList.Count; i++)

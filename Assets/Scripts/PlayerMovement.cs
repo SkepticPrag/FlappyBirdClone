@@ -9,23 +9,35 @@ public class PlayerMovement : MonoBehaviour
     private PlayerInputActions _playerInputAction;
     private float _velocity = 3.5f;
     private float _rotationSpeed = 10f;
+    private Vector3 _startingPosition;
 
-    public static PlayerInput playerInput;
+    public delegate void OnGameStartedEnablePlayer();
+    public static OnGameStartedEnablePlayer onGameStartedEnablePlayer;
 
+    public delegate void OnGameFinishedDisablePlayer();
+    public static OnGameFinishedDisablePlayer onGameFinishedDisablePlayer;
+
+    public delegate void OnGameRestartedResetPlayer();
+    public static OnGameRestartedResetPlayer onGameRestartedResetPlayer;
 
     private void Awake()
     {
-        _rigidbody = GetComponent<Rigidbody>();
+        onGameStartedEnablePlayer += EnablePlayer;
+        onGameFinishedDisablePlayer += DisablePlayer;
+        onGameRestartedResetPlayer += ResetPlayer;
 
-        playerInput = GetComponent<PlayerInput>();
+        _rigidbody = GetComponent<Rigidbody>();
 
         _playerInputAction = new PlayerInputActions();
         _playerInputAction.Player.Jump.performed += Jump;
+
+        _startingPosition = GetComponent<Transform>().position;
     }
 
     private void FixedUpdate()
     {
-        transform.rotation = Quaternion.Euler(0, 0, _rigidbody.velocity.y * _rotationSpeed);
+        if (GameManager.Instance.IsGameplayOn)
+            transform.rotation = Quaternion.Euler(0, 0, _rigidbody.velocity.y * _rotationSpeed);
     }
 
     private void Jump(InputAction.CallbackContext obj)
@@ -33,9 +45,32 @@ public class PlayerMovement : MonoBehaviour
         _rigidbody.velocity = Vector3.up * _velocity;
     }
 
+    private void ResetPlayer()
+    {
+        transform.position = _startingPosition;
+        transform.rotation = Quaternion.identity;
+    }
+
     private void EnablePlayer()
     {
         _rigidbody.isKinematic = false;
         _playerInputAction.Player.Enable();
     }
+
+    private void DisablePlayer()
+    {
+        _rigidbody.isKinematic = true;
+        _playerInputAction.Player.Disable();
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        GameManager.Instance.ScoreUp();
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        GameManager.Instance.GameOver();
+    }
+
 }

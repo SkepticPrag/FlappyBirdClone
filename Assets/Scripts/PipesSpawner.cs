@@ -4,9 +4,26 @@ public class PipesSpawner : MonoBehaviour
 {
     [SerializeField] private float _heightRange;
 
+    public delegate void OnGameStartedEnableSpawner();
+    public static OnGameStartedEnableSpawner onGameStartedEnableSpawner;
+
+    public delegate void OnGameFinishedDisableSpawner();
+    public static OnGameFinishedDisableSpawner onGameFinishedDisableSpawner;
+
+    private void Awake()
+    {
+        onGameStartedEnableSpawner += InvokePipeSpawner;
+        onGameFinishedDisableSpawner += StopInvoke;
+    }
+
     private void InvokePipeSpawner()
     {
-        InvokeRepeating("SpawnPipes", 1.5f, 1.5f);
+        InvokeRepeating("SpawnPipes", 0f, 1.5f);
+    }
+
+    private void StopInvoke()
+    {
+        CancelInvoke();
     }
 
     private void SpawnPipes()
