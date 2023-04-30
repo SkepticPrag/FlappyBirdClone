@@ -1,22 +1,21 @@
+using System.Collections;
 using UnityEngine;
 
-public class MenuController : MonoBehaviour
+public class MenuManager : MonoBehaviour
 {
     [SerializeField] private GameObject _mainMenuPanel;
     [SerializeField] private GameObject _pausePanel;
     [SerializeField] private GameObject _scorePanels;
     [SerializeField] private GameObject _gameOverPanel;
+    [SerializeField] private GameObject _highestScorePanel;
     [SerializeField] private GameObject _pauseButtonUI;
     [SerializeField] public GameObject ExitButton;
 
-    private static MenuController instance;
-    public static MenuController Instance { get { return instance; } }
+    private Countdown _countdown;
 
     private void Awake()
     {
-        if (instance == null) { instance = this; }
-        else if (instance != this)
-            Destroy(gameObject);
+        _countdown = GetComponent<Countdown>();
     }
 
     public void PlayButton()
@@ -32,7 +31,7 @@ public class MenuController : MonoBehaviour
         _pausePanel.SetActive(false);
         _pauseButtonUI.SetActive(true);
 
-        GameManager.Instance.ResumeGameplay();
+        _countdown.StartCountdown();
     }
 
     public void RetryButton()
@@ -49,9 +48,8 @@ public class MenuController : MonoBehaviour
         _gameOverPanel.SetActive(false);
         _pausePanel.SetActive(false);
         _scorePanels.SetActive(false);
-        _mainMenuPanel.SetActive(true);
 
-        GameManager.Instance.MainMenu();
+        StartCoroutine("ShowHighestScore");
     }
 
     public void ExitGameButton()
@@ -73,4 +71,14 @@ public class MenuController : MonoBehaviour
         _pauseButtonUI.SetActive(false);
 
     }
+
+    private IEnumerator ShowHighestScore()
+    {
+        _highestScorePanel.SetActive(true);
+        yield return new WaitForSecondsRealtime(3f);
+        _highestScorePanel.SetActive(false);
+        _mainMenuPanel.SetActive(true);
+        GameManager.Instance.MainMenu();
+    }
+
 }

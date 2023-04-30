@@ -1,9 +1,12 @@
-using System.Collections;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     public bool IsGameplayOn = false;
+
+    private MenuManager _menuManager;
+    private EventManager _eventManager;
+
 
     private static GameManager instance;
     public static GameManager Instance { get { return instance; } }
@@ -13,18 +16,15 @@ public class GameManager : MonoBehaviour
         if (instance == null) { instance = this; }
         else if (instance != this)
             Destroy(gameObject);
+
+        _menuManager = GetComponent<MenuManager>();
+        _eventManager = GetComponent<EventManager>();
     }
 
     public void StartGame()
     {
         IsGameplayOn = true;
-        PlayerStateManager.onGameStartedEnablePlayer?.Invoke();
-        PipesSpawner.onGameStartedEnableSpawner?.Invoke();
-    }
-
-    public void ResumeGameplay()
-    {
-        StartCoroutine("ResumeGame");
+        _eventManager.EnableGameplay();
     }
 
     public void Pause()
@@ -32,10 +32,8 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0;
     }
 
-    private IEnumerator ResumeGame()
+    public void ResumeGame()
     {
-        yield return new WaitForSecondsRealtime(3f);
-
         Time.timeScale = 1;
     }
 
@@ -48,30 +46,22 @@ public class GameManager : MonoBehaviour
 
         ScoreManager.Instance.ResetScore();
         ObjectPool.Instance.DisableEveryPipe();
-
-        PlayerStateManager.onGameRestartedResetPlayer?.Invoke();
-        PlayerStateManager.onGameFinishedDisablePlayer?.Invoke();
-        PipesSpawner.onGameFinishedDisableSpawner?.Invoke();
-        PipesStateManager.onGameFinishedDisablePipes?.Invoke();
+        _eventManager.ResetGameplay();
     }
 
     public void GameOver()
     {
         PlayerPrefs.Save();
         IsGameplayOn = false;
-        PlayerStateManager.onGameFinishedDisablePlayer?.Invoke();
-        PipesSpawner.onGameFinishedDisableSpawner?.Invoke();
-        PipesStateManager.onGameFinishedDisablePipes?.Invoke();
-        MenuController.Instance.GameOverMenu();
+        _eventManager.DisableGameplay();
+        _menuManager.GameOverMenu();
     }
 
     public void Retry()
     {
         ScoreManager.Instance.ResetScore();
         ObjectPool.Instance.DisableEveryPipe();
-        PlayerStateManager.onGameRestartedResetPlayer?.Invoke();
-        PlayerStateManager.onGameStartedEnablePlayer?.Invoke();
-        PipesSpawner.onGameStartedEnableSpawner?.Invoke();
+        _eventManager.RestartGameplay();
         IsGameplayOn = true;
     }
 }

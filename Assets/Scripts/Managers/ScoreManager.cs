@@ -9,6 +9,9 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] private TMP_Text _bestScoreText;
     [SerializeField] private TMP_Text _currentScoreText;
 
+    [SerializeField] private TMP_Text _scorePanelBestScoreText;
+    [SerializeField] private TMP_Text _scorePanelYourScoreText;
+
     private static ScoreManager instance;
     public static ScoreManager Instance { get { return instance; } }
 
@@ -18,33 +21,37 @@ public class ScoreManager : MonoBehaviour
         else if (instance != this)
             Destroy(gameObject);
 
-        _bestScore = PlayerPrefs.GetInt("HighScore", 0);
-        _bestScoreText.text = _bestScore.ToString();
+        GetHighestScore();
     }
 
-    private void UpdateCurrentScore()
+    private void GetHighestScore()
     {
-        _currentScoreText.text = _currentScore.ToString();
+        _bestScore = PlayerPrefs.GetInt("HighScore", 0);
+        _bestScoreText.text = _bestScore.ToString();
+        _scorePanelBestScoreText.text = _bestScore.ToString();
     }
 
     private void SetNewHighScore()
     {
         PlayerPrefs.SetInt("HighScore", _currentScore);
         _bestScoreText.text = _currentScore.ToString();
+        _scorePanelBestScoreText.text = _bestScore.ToString();
     }
 
     public void ScoreUp()
     {
         _currentScore++;
+        _currentScoreText.text = _currentScore.ToString();
+        _scorePanelYourScoreText.text = _currentScore.ToString();
+
         if (_currentScore > PlayerPrefs.GetInt("HighScore", 0))
             SetNewHighScore();
-
-        UpdateCurrentScore();
     }
 
     public void ResetScore()
     {
         _currentScore = 0;
-        UpdateCurrentScore();
+        _currentScoreText.text = _currentScore.ToString();
+        _scorePanelYourScoreText.text = _currentScore.ToString();
     }
 }

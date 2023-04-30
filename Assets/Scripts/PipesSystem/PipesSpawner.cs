@@ -37,5 +37,4 @@ public class PipesSpawner : MonoBehaviour
         onGameStartedEnableSpawner -= InvokePipeSpawner;
         onGameFinishedDisableSpawner -= StopInvoke;
     }
-
 }

@@ -1,9 +1,10 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 
 public class PlayerMovement : PlayerStateManager
-{ 
+{
     private float _velocity = 3.5f;
     private float _rotationSpeed = 10f;
 
@@ -25,7 +26,8 @@ public class PlayerMovement : PlayerStateManager
 
     private void Jump(InputAction.CallbackContext obj)
     {
-        _rigidbody.velocity = Vector3.up * _velocity;
+        if (!EventSystem.current.IsPointerOverGameObject())
+            _rigidbody.velocity = Vector3.up * _velocity;
     }
 
     private void OnTriggerEnter(Collider other)
