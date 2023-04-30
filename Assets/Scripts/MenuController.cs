@@ -6,6 +6,7 @@ public class MenuController : MonoBehaviour
     [SerializeField] private GameObject PausePanel;
     [SerializeField] private GameObject ScorePanels;
     [SerializeField] private GameObject GameOverPanel;
+    [SerializeField] private GameObject PauseButtonUI;
     [SerializeField] private GameObject _exitButton;
 
     private static MenuController instance;
@@ -26,22 +27,28 @@ public class MenuController : MonoBehaviour
     {
         MainMenuPanel.SetActive(false);
         ScorePanels.SetActive(true);
+        PauseButtonUI.SetActive(true);
         GameManager.Instance.StartGame();
     }
 
     public void ResumeButton()
     {
         PausePanel.SetActive(false);
+        PauseButtonUI.SetActive(true);
+        GameManager.Instance.ResumeGameplay();
     }
 
     public void RetryButton()
     {
         GameOverPanel.SetActive(false);
+        PauseButtonUI.SetActive(true);
+
         GameManager.Instance.Retry();
     }
 
     public void MainMenuButton()
     {
+        PauseButtonUI.SetActive(false);
         GameOverPanel.SetActive(false);
         PausePanel.SetActive(false);
         ScorePanels.SetActive(false);
@@ -56,11 +63,15 @@ public class MenuController : MonoBehaviour
 
     public void PauseButton()
     {
+        PauseButtonUI.SetActive(false);
         PausePanel.SetActive(true);
+        GameManager.Instance.Pause();
     }
 
     public void GameOverMenu()
     {
         GameOverPanel.SetActive(true);
+        PauseButtonUI.SetActive(false);
+
     }
 }

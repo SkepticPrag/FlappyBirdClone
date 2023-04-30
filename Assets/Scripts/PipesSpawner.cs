@@ -32,4 +32,10 @@ public class PipesSpawner : MonoBehaviour
         ObjectPool.Instance.RequestPipes(spawnPosition, Quaternion.identity);
     }
 
+    private void OnDestroy()
+    {
+        onGameStartedEnableSpawner -= InvokePipeSpawner;
+        onGameFinishedDisableSpawner -= StopInvoke;
+    }
+
 }

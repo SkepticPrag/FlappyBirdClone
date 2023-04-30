@@ -41,16 +41,21 @@ public class GameManager : MonoBehaviour
         UpdateCurrentScore();
     }
 
-    public IEnumerator ResumeGame()
+    public void ResumeGameplay()
     {
-        MenuController.Instance.ResumeButton();
+        StartCoroutine("ResumeGame");
+    }
 
-        yield return new WaitForSeconds(3f);
+    public void Pause()
+    {
+        Time.timeScale = 0;
+    }
 
-        IsGameplayOn = true;
-        PlayerMovement.onGameStartedEnablePlayer?.Invoke();
-        PipesSpawner.onGameStartedEnableSpawner?.Invoke();
-        PipesMovement.onGameResumed?.Invoke();
+    private IEnumerator ResumeGame()
+    {
+        yield return new WaitForSecondsRealtime(3f);
+
+        Time.timeScale = 1;
     }
 
     public void MainMenu()

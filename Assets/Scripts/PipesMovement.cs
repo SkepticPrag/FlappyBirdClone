@@ -20,7 +20,8 @@ public class PipesMovement : MonoBehaviour
 
     private void RestartCoroutine()
     {
-        StartCoroutine("DeactivatePipes");
+        if (gameObject.activeSelf)
+            StartCoroutine("DeactivatePipes");
     }
 
     private void StopDeactivatePipesCoroutine()
@@ -39,5 +40,11 @@ public class PipesMovement : MonoBehaviour
     {
         if (GameManager.Instance.IsGameplayOn)
             transform.position += Vector3.left * _speed * Time.deltaTime;
+    }
+
+    private void OnDestroy()
+    {
+        onGameResumed -= RestartCoroutine;
+        onGameFinishedDisablePipes -= StopDeactivatePipesCoroutine;
     }
 }

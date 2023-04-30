@@ -7,6 +7,7 @@ public class PlayerMovement : MonoBehaviour
 
     private Rigidbody _rigidbody;
     private PlayerInputActions _playerInputAction;
+    private PlayerInput _playerInput;
     private float _velocity = 3.5f;
     private float _rotationSpeed = 10f;
     private Vector3 _startingPosition;
@@ -22,6 +23,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void Awake()
     {
+        _playerInput = GetComponent<PlayerInput>();
+
+        if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
+            _playerInput.SwitchCurrentActionMap("Mobile");
+
         onGameStartedEnablePlayer += EnablePlayer;
         onGameFinishedDisablePlayer += DisablePlayer;
         onGameRestartedResetPlayer += ResetPlayer;
@@ -73,4 +79,10 @@ public class PlayerMovement : MonoBehaviour
         GameManager.Instance.GameOver();
     }
 
+    private void OnDestroy()
+    {
+        onGameStartedEnablePlayer -= EnablePlayer;
+        onGameFinishedDisablePlayer -= DisablePlayer;
+        onGameRestartedResetPlayer -= ResetPlayer;
+    }
 }
