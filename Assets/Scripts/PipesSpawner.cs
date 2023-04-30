@@ -4,7 +4,7 @@ public class PipesSpawner : MonoBehaviour
 {
     [SerializeField] private float _heightRange;
 
-    private void Start()
+    private void InvokePipeSpawner()
     {
         InvokeRepeating("SpawnPipes", 1.5f, 1.5f);
     }

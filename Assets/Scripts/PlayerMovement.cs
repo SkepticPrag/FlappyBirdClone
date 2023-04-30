@@ -1,7 +1,5 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
 
 
 public class PlayerMovement : MonoBehaviour
@@ -22,7 +20,6 @@ public class PlayerMovement : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
 
         _playerInputAction = new PlayerInputActions();
-        _playerInputAction.Player.Enable();
         _playerInputAction.Player.Jump.performed += Jump;
     }
 
@@ -34,5 +31,11 @@ public class PlayerMovement : MonoBehaviour
     private void Jump(InputAction.CallbackContext obj)
     {
         _rigidbody.velocity = Vector3.up * _velocity;
+    }
+
+    private void EnablePlayer()
+    {
+        _rigidbody.isKinematic = false;
+        _playerInputAction.Player.Enable();
     }
 }
