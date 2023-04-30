@@ -10,8 +10,12 @@ public class PlayerMovement : MonoBehaviour
     private PlayerInput _playerInput;
     private float _velocity = 3.5f;
     private float _rotationSpeed = 10f;
+
     private Vector3 _startingPosition;
 
+    private Vector3 _currentPosition;
+
+    #region Delegates;
     public delegate void OnGameStartedEnablePlayer();
     public static OnGameStartedEnablePlayer onGameStartedEnablePlayer;
 
@@ -20,6 +24,7 @@ public class PlayerMovement : MonoBehaviour
 
     public delegate void OnGameRestartedResetPlayer();
     public static OnGameRestartedResetPlayer onGameRestartedResetPlayer;
+    #endregion
 
     private void Awake()
     {
@@ -38,6 +43,13 @@ public class PlayerMovement : MonoBehaviour
         _playerInputAction.Player.Jump.performed += Jump;
 
         _startingPosition = GetComponent<Transform>().position;
+    }
+
+    private void Update()
+    {
+        _currentPosition = transform.position;
+        _currentPosition.y = Mathf.Clamp(_currentPosition.y, 0, 7.75f);
+        transform.position = _currentPosition;
     }
 
     private void FixedUpdate()
