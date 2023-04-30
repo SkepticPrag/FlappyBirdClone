@@ -1,16 +1,9 @@
 using System.Collections;
 using UnityEngine;
-using TMPro;
 
 public class GameManager : MonoBehaviour
 {
-    private int _currentScore = 0;
-    private int _bestScore = 0;
-
     public bool IsGameplayOn = false;
-
-    [SerializeField] private TMP_Text _bestScoreText;
-    [SerializeField] private TMP_Text _currentScoreText;
 
     private static GameManager instance;
     public static GameManager Instance { get { return instance; } }
@@ -20,25 +13,13 @@ public class GameManager : MonoBehaviour
         if (instance == null) { instance = this; }
         else if (instance != this)
             Destroy(gameObject);
-
-        _bestScore = PlayerPrefs.GetInt("HighScore", 0);
-        _bestScoreText.text = _bestScore.ToString();
     }
 
     public void StartGame()
     {
         IsGameplayOn = true;
-        PlayerMovement.onGameStartedEnablePlayer?.Invoke();
+        PlayerStateManager.onGameStartedEnablePlayer?.Invoke();
         PipesSpawner.onGameStartedEnableSpawner?.Invoke();
-    }
-
-    public void ScoreUp()
-    {
-        _currentScore++;
-        if (_currentScore > PlayerPrefs.GetInt("HighScore", 0))
-            SetNewHighScore();
-
-        UpdateCurrentScore();
     }
 
     public void ResumeGameplay()
@@ -60,42 +41,37 @@ public class GameManager : MonoBehaviour
 
     public void MainMenu()
     {
-        _currentScore = 0;
-        UpdateCurrentScore();
-        ObjectPool.Instance.DisableEveryPipe();
-        PlayerMovement.onGameRestartedResetPlayer?.Invoke();
+        IsGameplayOn = false;
 
+        if (Time.timeScale == 0)
+            Time.timeScale = 1;
+
+        ScoreManager.Instance.ResetScore();
+        ObjectPool.Instance.DisableEveryPipe();
+
+        PlayerStateManager.onGameRestartedResetPlayer?.Invoke();
+        PlayerStateManager.onGameFinishedDisablePlayer?.Invoke();
+        PipesSpawner.onGameFinishedDisableSpawner?.Invoke();
+        PipesStateManager.onGameFinishedDisablePipes?.Invoke();
     }
 
     public void GameOver()
     {
         PlayerPrefs.Save();
         IsGameplayOn = false;
-        PlayerMovement.onGameFinishedDisablePlayer?.Invoke();
+        PlayerStateManager.onGameFinishedDisablePlayer?.Invoke();
         PipesSpawner.onGameFinishedDisableSpawner?.Invoke();
-        PipesMovement.onGameFinishedDisablePipes?.Invoke();
+        PipesStateManager.onGameFinishedDisablePipes?.Invoke();
         MenuController.Instance.GameOverMenu();
     }
 
     public void Retry()
     {
-        _currentScore = 0;
-        UpdateCurrentScore();
+        ScoreManager.Instance.ResetScore();
         ObjectPool.Instance.DisableEveryPipe();
-        PlayerMovement.onGameRestartedResetPlayer?.Invoke();
-        PlayerMovement.onGameStartedEnablePlayer?.Invoke();
+        PlayerStateManager.onGameRestartedResetPlayer?.Invoke();
+        PlayerStateManager.onGameStartedEnablePlayer?.Invoke();
         PipesSpawner.onGameStartedEnableSpawner?.Invoke();
         IsGameplayOn = true;
-    }
-
-    private void UpdateCurrentScore()
-    {
-        _currentScoreText.text = _currentScore.ToString();
-    }
-
-    private void SetNewHighScore()
-    {
-        PlayerPrefs.SetInt("HighScore", _currentScore);
-        _bestScoreText.text = _currentScore.ToString();
     }
 }
